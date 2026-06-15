@@ -1,8 +1,3 @@
-// ホットペッパーグルメAPIキー
-// .envから読み込む想定。ブラウザ直実行のためここに記載（後でサーバーサイドに移行推奨）
-const API_KEY = window.HOTPEPPER_API_KEY || 'YOUR_API_KEY_HERE';
-
-// シチュエーション別の検索パラメータ補正
 const SITUATION_CONFIG = {
   social: {
     label: '社内メンバー',
@@ -24,7 +19,6 @@ const SITUATION_CONFIG = {
   },
 };
 
-// 予算コードと表示テキストのマッピング
 const BUDGET_LABELS = {
   B008: '〜5,000円',
   B017: '5,000〜8,000円',
@@ -37,12 +31,16 @@ const loading = document.getElementById('loading');
 const results = document.getElementById('results');
 const searchBtn = document.getElementById('searchBtn');
 
+let currentStart = 1;
+let lastSearchParams = null;
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  currentStart = 1;
   await searchRestaurants();
 });
 
-async function searchRestaurants() {
+async function searchRestaurants(start = 1) {
   const area = document.getElementById('area').value.trim();
   const count = document.getElementById('count').value;
   const situation = document.getElementById('situation').value;
@@ -53,7 +51,8 @@ async function searchRestaurants() {
   const freeDrink = document.getElementById('freeDrink').checked;
   const noSmoke = document.getElementById('noSmoke').checked;
 
-  // UI状態の切り替え
+  lastSearchParams = { area, count, situation, budget, genre, privateRoom, parking, freeDrink, noSmoke };
+
   results.classList.add('hidden');
   loading.classList.remove('hidden');
   searchBtn.disabled = true;
@@ -63,6 +62,7 @@ async function searchRestaurants() {
     const params = new URLSearchParams({
       keyword: area,
       count: 5,
+      start: start,
     });
 
     if (budget) params.append('budget', budget);
@@ -79,7 +79,7 @@ async function searchRestaurants() {
     const url = `/api/restaurants?${params.toString()}`;
     const resp = await fetch(url);
     const data = await resp.json();
-    renderResults(data, { area, count, situation, budget });
+    renderResults(data, { area, count, situation, budget }, start);
 
   } catch (err) {
     loading.classList.add('hidden');
@@ -92,11 +92,11 @@ async function searchRestaurants() {
   }
 }
 
-
-function renderResults(data, searchParams) {
+function renderResults(data, searchParams, start = 1) {
   results.classList.remove('hidden');
 
   const shops = data?.results?.shop;
+  const total = parseInt(data?.results?.results_available || '0');
 
   if (!shops || shops.length === 0) {
     results.innerHTML = `
@@ -108,9 +108,11 @@ function renderResults(data, searchParams) {
 
   const situationLabel = SITUATION_CONFIG[searchParams.situation]?.label || '';
   const budgetLabel = BUDGET_LABELS[searchParams.budget] || '';
+  const nextStart = start + 5;
+  const hasMore = nextStart <= total;
 
   let html = `<div class="results-header">
-    <span>${searchParams.area}</span> ・ ${searchParams.count}名 ・ ${situationLabel} ・ ${budgetLabel} の検索結果（${shops.length}件）
+    <span>${searchParams.area}</span> ・ ${searchParams.count}名 ・ ${situationLabel} ・ ${budgetLabel} の検索結果（全${total}件中 ${start}〜${start + shops.length - 1}件目）
   </div>`;
 
   shops.forEach((shop) => {
@@ -131,6 +133,10 @@ function renderResults(data, searchParams) {
       </div>`;
   });
 
+  if (hasMore) {
+    html += `<button class="next-btn" onclick="searchRestaurants(${nextStart})">次の5件を見る →</button>`;
+  }
+
   results.innerHTML = html;
 }
 
@@ -139,9 +145,9 @@ function buildTags(shop) {
 
   if (shop.genre?.name) tags.push(`<span class="tag">${shop.genre.name}</span>`);
   if (shop.sub_genre?.name) tags.push(`<span class="tag">${shop.sub_genre.name}</span>`);
-  if (shop.private_room === '1') tags.push(`<span class="tag highlight">個室あり</span>`);
-  if (shop.parking === 'あり') tags.push(`<span class="tag highlight">駐車場あり</span>`);
-  if (shop.free_drink === '1') tags.push(`<span class="tag highlight">飲み放題</span>`);
+  if (shop.private_room === 'あり' || shop.private_room?.startsWith('あり')) tags.push(`<span class="tag highlight">個室あり</span>`);
+  if (shop.parking === 'あり' || shop.parking?.startsWith('あり')) tags.push(`<span class="tag highlight">駐車場あり</span>`);
+  if (shop.free_drink === 'あり' || shop.free_drink?.startsWith('あり')) tags.push(`<span class="tag highlight">飲み放題</span>`);
   if (shop.non_smoking === '全面禁煙' || shop.non_smoking === '禁煙席あり') {
     tags.push(`<span class="tag highlight">禁煙・分煙</span>`);
   }
