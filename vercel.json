@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/restaurants", "destination": "/api/restaurants.py" }
+  ]
+}

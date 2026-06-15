@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会食レストランピッカー</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🍽️ 会食レストランピッカー</h1>
+      <p>条件を入力して、ぴったりのお店を見つけましょう</p>
+    </header>
+
+    <form id="searchForm">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>日時</label>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="date" id="date" name="date" required style="flex:1;">
+            <select id="hour" name="hour" required style="width:72px;">
+              <option value="">時</option>
+              <option value="10">10時</option>
+              <option value="11">11時</option>
+              <option value="12">12時</option>
+              <option value="13">13時</option>
+              <option value="14">14時</option>
+              <option value="15">15時</option>
+              <option value="16">16時</option>
+              <option value="17">17時</option>
+              <option value="18">18時</option>
+              <option value="19">19時</option>
+              <option value="20">20時</option>
+              <option value="21">21時</option>
+              <option value="22">22時</option>
+              <option value="23">23時</option>
+            </select>
+            <select id="minute" name="minute" required style="width:72px;">
+              <option value="00">00分</option>
+              <option value="15">15分</option>
+              <option value="30">30分</option>
+              <option value="45">45分</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="area">エリア（最寄駅・エリア名）</label>
+          <input type="text" id="area" name="area" placeholder="例：新宿、渋谷、品川" required>
+        </div>
+
+        <div class="form-group">
+          <label for="count">人数</label>
+          <select id="count" name="count" required>
+            <option value="">選択してください</option>
+            <option value="2">2名</option>
+            <option value="3">3名</option>
+            <option value="4">4名</option>
+            <option value="5">5名</option>
+            <option value="6">6名</option>
+            <option value="8">8名</option>
+            <option value="10">10名</option>
+            <option value="15">15名以上</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="situation">シチュエーション</label>
+          <select id="situation" name="situation" required>
+            <option value="">選択してください</option>
+            <option value="social">社内メンバー</option>
+            <option value="entertainment">接待</option>
+            <option value="partner">協業相手</option>
+            <option value="meeting">商談・打合せ</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="budget">予算（一人あたり）</label>
+          <select id="budget" name="budget" required>
+            <option value="">選択してください</option>
+            <option value="B008">〜5,000円</option>
+            <option value="B017">5,000〜8,000円</option>
+            <option value="B019">8,000〜10,000円</option>
+            <option value="B020">10,000円〜</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="genre">料理ジャンル</label>
+          <select id="genre" name="genre">
+            <option value="">こだわらない</option>
+            <option value="G001">居酒屋</option>
+            <option value="G002">ダイニングバー・バル</option>
+            <option value="G004">創作料理</option>
+            <option value="G006">和食</option>
+            <option value="G007">洋食</option>
+            <option value="G008">イタリアン・フレンチ</option>
+            <option value="G009">中華</option>
+            <option value="G010">焼肉・ホルモン</option>
+            <option value="G011">韓国料理</option>
+            <option value="G013">寿司</option>
+            <option value="G014">焼き鳥・串焼き</option>
+            <option value="G016">しゃぶしゃぶ・すき焼き</option>
+            <option value="G017">その他</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="form-group options-group">
+        <label>こだわり条件</label>
+        <div class="checkboxes">
+          <label class="checkbox-label">
+            <input type="checkbox" id="privateRoom" name="privateRoom">
+            <span>個室必須</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="parking" name="parking">
+            <span>駐車場あり</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="freeDrink" name="freeDrink">
+            <span>飲み放題あり</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="noSmoke" name="noSmoke">
+            <span>禁煙・分煙</span>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" id="searchBtn">お店を探す</button>
+    </form>
+
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>お店を検索中...</p>
+    </div>
+
+    <div id="results" class="results hidden"></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
