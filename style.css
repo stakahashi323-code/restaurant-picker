@@ -303,6 +303,25 @@ button[type="submit"]:active {
   background: #fff5f4;
 }
 
+.next-btn {
+  width: 100%;
+  padding: 14px;
+  background: #fff;
+  color: #e85c2a;
+  border: 2px solid #e85c2a;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.next-btn:hover {
+  background: #fff5f2;
+}
+
 .no-results {
   text-align: center;
   padding: 60px 20px;
